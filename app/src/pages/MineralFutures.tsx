@@ -136,7 +136,7 @@ export default function MineralFutures() {
         {IS_DEVNET && (
           <div className="mb-4 rounded-lg border border-primary/30 bg-primary/10 px-4 py-2 text-xs text-foreground">
             <Shield className="inline w-3 h-3 mr-1 text-primary" />
-            Devnet demo. Transactions use devnet SOL.
+            Devnet demo. Prices are reference levels, and transactions use devnet SOL.
           </div>
         )}
 

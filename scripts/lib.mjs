@@ -47,6 +47,8 @@ export const ixUpdatePrice = (oracle, commodity, price) => {
 };
 export const ixSetOracle = (authority, commodity, newOracle) =>
   ix("set_oracle", [], [meta(marketPda(commodity), false, true), meta(authority, true, false), meta(newOracle, false, false)]);
+export const ixTransferAuthority = (authority, commodity, newAuthority) =>
+  ix("transfer_authority", [], [meta(marketPda(commodity), false, true), meta(authority, true, false), meta(newAuthority, false, false)]);
 export const ixFundReserve = (funder, commodity, lamports) => {
   const m = marketPda(commodity);
   return ix("fund_reserve", [u64(lamports)], [meta(m, false, false), meta(vaultPda(m), false, true), meta(funder, true, true), meta(SystemProgram.programId, false, false)]);

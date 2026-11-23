@@ -1,0 +1,6 @@
+{
+  "ANTIMONY": [
+    { "name": "provider-a", "url": "https://example.com/v1/antimony?key=${PROVIDER_A_KEY}", "path": "data.price_usd_per_tonne", "multiplier": 1 },
+    { "name": "provider-b", "url": "https://example.org/api/sb", "headers": { "X-Api-Key": "PROVIDER_B_KEY" }, "path": "result.price", "multiplier": 1000 }
+  ]
+}

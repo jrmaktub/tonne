@@ -1,0 +1,16 @@
+[toolchain]
+package_manager = "yarn"
+
+[features]
+resolution = true
+skip-lint = false
+
+[programs.localnet]
+mineral_futures = "zqUKe6cBSnMRCSouhMFzXDHdP5ExuhDbmnvqJX8KoSb"
+
+[programs.devnet]
+mineral_futures = "zqUKe6cBSnMRCSouhMFzXDHdP5ExuhDbmnvqJX8KoSb"
+
+[provider]
+cluster = "devnet"
+wallet = "~/.config/solana/id.json"

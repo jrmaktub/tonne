@@ -875,7 +875,7 @@ mod tests {
 
     /// Property test. Open random positions under the solvency rule, move the
     /// price by any amount, close everyone. The pot must never pay out more
-    /// than it holds. This is the guarantee the old program did not have.
+    /// than it holds.
     #[test]
     fn solvency_rule_means_the_pot_can_always_pay() {
         let mut rng = Lcg(42);

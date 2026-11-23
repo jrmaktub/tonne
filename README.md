@@ -4,6 +4,10 @@ Independent price discovery and futures for critical minerals, built on Solana.
 
 Antimony, tungsten, NdPr oxide, gallium and germanium have no exchange of their own. Their prices come from a few paid reports, and producers and buyers cannot hedge. Tonne publishes a transparent on-chain price for each metal and lets people take cash-settled positions against it. Copper and lithium are included for deep, active markets.
 
+## Live on Solana devnet
+
+Program: [zqUKe6cBSnMRCSouhMFzXDHdP5ExuhDbmnvqJX8KoSb](https://explorer.solana.com/address/zqUKe6cBSnMRCSouhMFzXDHdP5ExuhDbmnvqJX8KoSb?cluster=devnet)
+
 ## What is in here
 
 | Folder | What it is |

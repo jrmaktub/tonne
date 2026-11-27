@@ -1,5 +1,5 @@
 import { Area, AreaChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
-import { usePriceHistory } from "@/hooks/usePriceHistory";
+import { usePriceHistory, type PricePoint } from "@/hooks/usePriceHistory";
 import { COMMODITY_LABEL, type CommodityName } from "@/constants/mineralFutures";
 
 const fmtUsd = (n: number) => `$${Math.round(n).toLocaleString()}`;
@@ -8,8 +8,18 @@ const fmtDate = (ts: number) =>
 const fmtTime = (ts: number) =>
   new Date(ts * 1000).toLocaleTimeString(undefined, { hour: "numeric", minute: "2-digit" });
 
-export default function PriceChart({ commodity, refreshKey }: { commodity: CommodityName; refreshKey?: unknown }) {
-  const { points, loading } = usePriceHistory(commodity, refreshKey);
+export default function PriceChart({
+  commodity,
+  refreshKey,
+  points: given,
+}: {
+  commodity: CommodityName;
+  refreshKey?: unknown;
+  points?: PricePoint[];
+}) {
+  const onchain = usePriceHistory(commodity, refreshKey);
+  const points = given ?? onchain.points;
+  const loading = given ? false : onchain.loading;
 
   if (loading) {
     return <div className="h-64 flex items-center justify-center text-sm text-muted-foreground">Loading price history…</div>;
@@ -45,7 +55,7 @@ export default function PriceChart({ commodity, refreshKey }: { commodity: Commo
             <span className="text-xs text-muted-foreground"> / tonne</span>
           </div>
           <div className="text-xs text-muted-foreground">
-            {points.length} recorded updates since {fmtDate(points[0].ts)}
+            {given ? "Simulated prices, updating every 3 seconds" : `${points.length} recorded updates since ${fmtDate(points[0].ts)}`}
           </div>
         </div>
         <div className={`text-sm font-mono ${up ? "text-[hsl(145,80%,50%)]" : "text-[hsl(0,80%,60%)]"}`}>

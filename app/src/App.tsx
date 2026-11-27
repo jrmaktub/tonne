@@ -3,7 +3,7 @@ import MineralFutures from "@/pages/MineralFutures";
 
 export default function App() {
   return (
-    <BrowserRouter>
+    <BrowserRouter basename={import.meta.env.BASE_URL}>
       <Routes>
         <Route path="*" element={<MineralFutures />} />
       </Routes>

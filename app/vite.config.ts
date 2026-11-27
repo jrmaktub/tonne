@@ -5,6 +5,7 @@ import path from "path";
 
 export default defineConfig({
   server: { host: "::", port: 8080 },
+  base: process.env.PAGES_BASE ?? "/",
   plugins: [react(), nodePolyfills({ globals: { Buffer: true, global: true, process: true } })],
   resolve: { alias: { "@": path.resolve(__dirname, "./src") } },
 });

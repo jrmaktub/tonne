@@ -11,6 +11,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { useSolanaWallet } from "@/hooks/useSolanaWallet";
 import { useMineralFutures, type PositionData } from "@/hooks/useMineralFutures";
+import { useDemoFutures } from "@/hooks/useDemoFutures";
 import {
   COMMODITIES,
   COMMODITY_LABEL,
@@ -45,8 +46,16 @@ function showError(e: unknown) {
 }
 
 export default function MineralFutures() {
-  const { connected, publicKey, provider, connect, disconnect, isPhantomInstalled } = useSolanaWallet();
-  const { markets, positions, solBalance, loading, refresh, openPosition, closePosition } = useMineralFutures(publicKey);
+  const wallet = useSolanaWallet();
+  const [mode, setMode] = useState<"demo" | "live">("demo");
+  const demo = mode === "demo";
+  const live = useMineralFutures(demo ? null : wallet.publicKey);
+  const sim = useDemoFutures(demo);
+  const { markets, positions, solBalance, loading, refresh, openPosition, closePosition } = demo ? sim : live;
+  const connected = demo ? true : wallet.connected;
+  const publicKey = demo ? "DemoAccount" : wallet.publicKey;
+  const provider = demo ? {} : wallet.provider;
+  const { connect, disconnect, isPhantomInstalled } = wallet;
 
   const [selected, setSelected] = useState<CommodityName>("ANTIMONY");
   const [direction, setDirection] = useState<0 | 1>(0);
@@ -120,7 +129,24 @@ export default function MineralFutures() {
             <Button variant="ghost" size="icon" onClick={refresh} disabled={loading} aria-label="Refresh">
               <RefreshCw className={`w-4 h-4 ${loading ? "animate-spin" : ""}`} />
             </Button>
-            {connected ? (
+            <div className="flex rounded-full border border-border/50 p-1 text-xs">
+              {(["demo", "live"] as const).map((m) => (
+                <button
+                  key={m}
+                  onClick={() => setMode(m)}
+                  className={`px-3 py-1.5 rounded-full font-semibold transition-all ${
+                    mode === m ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"
+                  }`}
+                >
+                  {m === "demo" ? "Simulated" : "Live devnet"}
+                </button>
+              ))}
+            </div>
+            {demo ? (
+              <Button variant="outline" className="text-xs" disabled>
+                <Wallet className="w-3 h-3 mr-1" /> Demo account
+              </Button>
+            ) : connected ? (
               <Button variant="outline" onClick={disconnect} className="text-xs">
                 <Wallet className="w-3 h-3 mr-1" /> {short(publicKey!)}
               </Button>
@@ -133,16 +159,27 @@ export default function MineralFutures() {
           </div>
         </div>
 
-        {IS_DEVNET && (
+        {demo ? (
           <div className="mb-4 rounded-lg border border-primary/30 bg-primary/10 px-4 py-2 text-xs text-foreground">
             <Shield className="inline w-3 h-3 mr-1 text-primary" />
-            Devnet demo. Prices are reference levels, and transactions use devnet SOL.
+            Simulated demo. Prices move randomly from reference levels and orders fill against a demo balance. Nothing is sent on-chain.
           </div>
+        ) : (
+          IS_DEVNET && (
+            <div className="mb-4 rounded-lg border border-primary/30 bg-primary/10 px-4 py-2 text-xs text-foreground">
+              <Shield className="inline w-3 h-3 mr-1 text-primary" />
+              Live on Solana devnet. Prices are reference levels, and transactions use devnet SOL. Set Phantom to devnet to trade.
+            </div>
+          )
         )}
 
         <Card className="border-border/50 bg-card mb-4">
           <CardContent className="p-4">
-            <PriceChart commodity={selected} refreshKey={market?.lastPriceUpdate} />
+            <PriceChart
+              commodity={selected}
+              refreshKey={market?.lastPriceUpdate}
+              points={demo ? sim.history[selected] ?? [] : undefined}
+            />
           </CardContent>
         </Card>
 
@@ -154,7 +191,7 @@ export default function MineralFutures() {
                 <CardTitle className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">Markets</CardTitle>
               </CardHeader>
               <CardContent className="space-y-1 p-3 pt-0">
-                {COMMODITIES.map((name) => {
+                {(COMMODITIES.some((c) => markets[c]) ? COMMODITIES.filter((c) => markets[c]) : COMMODITIES).map((name) => {
                   const m = markets[name];
                   const active = selected === name;
                   return (
